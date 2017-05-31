@@ -6,6 +6,7 @@
     tools:context="com.developer.paul.itimeviewgroup.MainActivity">
 
     <com.developer.paul.itimerecycleviewgroup.ITimeRecycleViewGroup
+        android:id="@+id/recycleViewGroup"
         android:layout_width="300dp"
         android:layout_height="500dp"/>
 

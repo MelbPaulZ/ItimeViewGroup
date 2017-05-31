@@ -8,17 +8,16 @@ import android.view.ViewGroup;
 
 public interface RecycleInterface{
 
-    AwesomeViewGroup getChildView(int index);
-    AwesomeViewGroup getFirstShowView();
-
-    // init show offset
-    void initialShowOffset(int offsetY);
-    // page change
-    void onPageChange(AwesomeViewGroup awesomeViewGroup);
+//    AwesomeViewGroup getChildView(int index);
+//    AwesomeViewGroup getFirstShowView();
+//
+//    // init show offset
+//    void initialShowOffset(int offsetY);
+//    // page change
+//    void onPageChange(AwesomeViewGroup awesomeViewGroup);
 
     // scroll position
-    void scrollToX(int x);
-    void scrollToY(int y);
+
     void scrollByX(int x);
     void scrollByY(int y);
     void scrollByXSmoothly(int x);
@@ -27,12 +26,12 @@ public interface RecycleInterface{
     void scrollByYSmoothly(int y, long duration);
 
 
-    // state change
-    void onScrollStart();
-    void onScrolling();
-    void onScrollEnd();
-    void onFlingStart();
-    void onFlingEnd();
+//    // state change
+//    void onScrollStart();
+//    void onScrolling();
+//    void onScrollEnd();
+//    void onFlingStart();
+//    void onFlingEnd();
 
 
 }

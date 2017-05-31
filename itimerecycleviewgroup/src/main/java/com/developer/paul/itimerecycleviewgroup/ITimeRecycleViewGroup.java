@@ -9,6 +9,7 @@ import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
@@ -58,6 +59,9 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
     private float originX, originY;
     private float newX, newY, preX, preY;
 
+    // interface
+    private OnScroll onScroll;
+
 
     public ITimeRecycleViewGroup(Context context) {
         super(context);
@@ -77,7 +81,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
     private void init(){
         for (int i = 0 ; i < NUM_SHOW+2 ; i ++){
             AwesomeViewGroup awesomeViewGroup = new AwesomeViewGroup(getContext());
-            awesomeViewGroup.setBackgroundColor(colors[i]);
+//            awesomeViewGroup.setBackgroundColor(colors[i]);
             awesomeViewGroup.setInRecycledViewIndex(i);
             awesomeViewGroup.setLayoutParams(new AwesomeViewGroup.AwesomeLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             awesomeViewGroupList.add(awesomeViewGroup);
@@ -107,6 +111,8 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 // redraw must before move, because of the index
                 reDrawViewGroupToLast(tempList.get(i), awesomeViewGroups.get(viewGroupSize - 1));
                 moveViewGroupToLast(tempList.get(i), awesomeViewGroups);
+                pageChanged = true;
+
             }
         }else if (scrollDir == SCROLL_RIGHT){
             for (int i = 0 ; i < viewGroupSize ; i ++){
@@ -120,11 +126,15 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 // redraw must before move, because of the index
                 reDrawViewGroupToFirst(tempList.get(i), awesomeViewGroups.get(0));
                 moveViewGroupToFirst(tempList.get(i), awesomeViewGroups);
+                pageChanged = true;
             }
         }
 
         if (pageChanged){
 //            LogUtil.logAwesomes(awesomeViewGroups);
+            if (onScroll!=null){
+                onScroll.onPageSelected(getFirstShownAwesomeViewGroup(awesomeViewGroups));
+            }
         }
     }
 
@@ -161,6 +171,16 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 }
                 break;
         }
+    }
+
+    private AwesomeViewGroup getFirstShownAwesomeViewGroup(List<AwesomeViewGroup> awesomeViewgroups){
+        for (AwesomeViewGroup awesomeViewgroup : awesomeViewgroups){
+            AwesomeViewGroup.AwesomeLayoutParams lp = (AwesomeViewGroup.AwesomeLayoutParams) awesomeViewgroup.getLayoutParams();
+            if (lp.left<=0 && lp.right > 0){
+                return awesomeViewgroup;
+            }
+        }
+        return null;
     }
 
     private void scrollToClosestPosition(List<AwesomeViewGroup> awesomeViewGroups){
@@ -473,42 +493,16 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
     }
 
     @Override
-    public AwesomeViewGroup getChildView(int index) {
-        return null;
-    }
-
-    @Override
-    public AwesomeViewGroup getFirstShowView() {
-        return null;
-    }
-
-    @Override
-    public void initialShowOffset(int offsetY) {
-
-    }
-
-    @Override
-    public void onPageChange(AwesomeViewGroup awesomeViewGroup) {
-
-    }
-
-    @Override
-    public void scrollToX(int x) {
-
-    }
-
-    @Override
-    public void scrollToY(int y) {
-
-    }
-
-    @Override
     public void scrollByX(int x) {
         for (AwesomeViewGroup awesomeViewGroup: awesomeViewGroupList){
             AwesomeViewGroup.AwesomeLayoutParams lp = (AwesomeViewGroup.AwesomeLayoutParams) awesomeViewGroup.getLayoutParams();
             lp.left += x;
             lp.right += x;
             awesomeViewGroup.layout(lp.left, lp.top, lp.right, lp.bottom);
+        }
+
+        if (onScroll!=null){
+            onScroll.onHorizontalScroll(x, (int) (newX - originX));
         }
 
         moveXPostCheck(awesomeViewGroupList, scrollDir);
@@ -526,6 +520,10 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
             lp.top += y;
             lp.bottom += y;
             awesomeViewGroup.layout(lp.left, lp.top, lp.right, lp.bottom);
+        }
+
+        if (onScroll!=null){
+            onScroll.onVerticalScroll(y, (int) (newY - originY));
         }
     }
 
@@ -648,29 +646,13 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
         scrollByYSmoothly(y, 200);
     }
 
-    @Override
-    public void onScrollStart() {
-
+    public interface OnScroll{
+        void onPageSelected(View v);
+        void onHorizontalScroll(int dx, int preOffsetX);
+        void onVerticalScroll(int dy, int preOffsetY);
     }
 
-    @Override
-    public void onScrolling() {
-
+    public void setOnScroll(OnScroll onScroll) {
+        this.onScroll = onScroll;
     }
-
-    @Override
-    public void onScrollEnd() {
-
-    }
-
-    @Override
-    public void onFlingStart() {
-
-    }
-
-    @Override
-    public void onFlingEnd() {
-
-    }
-    
 }

@@ -48,17 +48,17 @@ public class AwesomeViewGroup extends ViewGroup {
      * for test only
      */
     private void initView() {
-        top = new TextView(getContext());
-        top.setText("topppp");
-        top.setTextSize(20);
-        top.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        addView(top);
-
-        bottom = new TextView(getContext());
-        bottom.setText("bottom");
-        bottom.setTextSize(20);
-        bottom.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        addView(bottom);
+//        top = new TextView(getContext());
+//        top.setText("topppp");
+//        top.setTextSize(20);
+//        top.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//        addView(top);
+//
+//        bottom = new TextView(getContext());
+//        bottom.setText("bottom");
+//        bottom.setTextSize(20);
+//        bottom.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+//        addView(bottom);
     }
 
 
@@ -72,8 +72,8 @@ public class AwesomeViewGroup extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        top.layout(0, 0, 100, 100);
-        bottom.layout(0, getHeight()- 100, 100, getHeight());
+//        top.layout(0, 0, 100, 100);
+//        bottom.layout(0, getHeight()- 100, 100, getHeight());
     }
 
     private boolean isInRange(int newN, int oldN, int tolerance) {
