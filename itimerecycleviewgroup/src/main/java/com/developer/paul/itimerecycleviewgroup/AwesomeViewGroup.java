@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 public class AwesomeViewGroup extends ViewGroup {
     private String TAG = "AwesomeViewGroup";
     private int inRecycledViewIndex;
+    private TextView top, bottom;
 
     public AwesomeViewGroup(Context context) {
         super(context);
@@ -46,11 +48,17 @@ public class AwesomeViewGroup extends ViewGroup {
      * for test only
      */
     private void initView() {
-//        TextView textView = new TextView(getContext());
-//        textView.setText("helloooo");
-//        textView.setTextSize(20);
-//        textView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-//        addView(textView);
+        top = new TextView(getContext());
+        top.setText("topppp");
+        top.setTextSize(20);
+        top.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        addView(top);
+
+        bottom = new TextView(getContext());
+        bottom.setText("bottom");
+        bottom.setTextSize(20);
+        bottom.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        addView(bottom);
     }
 
 
@@ -64,7 +72,8 @@ public class AwesomeViewGroup extends ViewGroup {
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
+        top.layout(0, 0, 100, 100);
+        bottom.layout(0, getHeight()- 100, 100, getHeight());
     }
 
     private boolean isInRange(int newN, int oldN, int tolerance) {

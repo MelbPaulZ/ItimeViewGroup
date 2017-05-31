@@ -23,7 +23,9 @@ public interface RecycleInterface{
     void scrollByY(int y);
     void scrollByXSmoothly(int x);
     void scrollByXSmoothly(int x, long duration);
-    void scrollToYSmoothly(int y);
+    void scrollByYSmoothly(int y);
+    void scrollByYSmoothly(int y, long duration);
+
 
     // state change
     void onScrollStart();
