@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -59,6 +60,8 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
     private float originX, originY;
     private float newX, newY, preX, preY;
 
+    private float totalMoveY;
+
     // interface
     private OnScroll onScroll;
 
@@ -81,7 +84,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
     private void init(){
         for (int i = 0 ; i < NUM_SHOW+2 ; i ++){
             AwesomeViewGroup awesomeViewGroup = new AwesomeViewGroup(getContext());
-//            awesomeViewGroup.setBackgroundColor(colors[i]);
+            awesomeViewGroup.setBackgroundColor(colors[i]);
             awesomeViewGroup.setInRecycledViewIndex(i);
             awesomeViewGroup.setLayoutParams(new AwesomeViewGroup.AwesomeLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             awesomeViewGroupList.add(awesomeViewGroup);
@@ -112,6 +115,8 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 reDrawViewGroupToLast(tempList.get(i), awesomeViewGroups.get(viewGroupSize - 1));
                 moveViewGroupToLast(tempList.get(i), awesomeViewGroups);
                 pageChanged = true;
+//                Log.i("aaa", "moveXPostCheck: left : " + tempList.get(i).getInRecycledViewIndex());
+
 
             }
         }else if (scrollDir == SCROLL_RIGHT){
@@ -127,6 +132,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 reDrawViewGroupToFirst(tempList.get(i), awesomeViewGroups.get(0));
                 moveViewGroupToFirst(tempList.get(i), awesomeViewGroups);
                 pageChanged = true;
+//                Log.i("aaa", "moveXPostCheck: right : " + tempList.get(i).getInRecycledViewIndex());
             }
         }
 
@@ -167,6 +173,8 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                     setStatus(VERTICAL_FLING);
                     int distance = scrollPos[1];
                     distance = getInBoundY(distance);
+                    LogUtil.log("fling dis : ", "child height" + childHeight + " dir : " + scrollDir +   " " + distance);
+                    LogUtil.logAwesomes(awesomeViewGroupList);
                     scrollByYSmoothly(distance,500);
                 }
                 break;
@@ -316,6 +324,29 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
         }
         switch (action){
             case MotionEvent.ACTION_DOWN:
+                if (status == HORIZONTAL_FLING){
+                    scrollOverTouchSlop = true;
+                    scrollModel = SCROLL_HORIZONTAL;
+                }
+
+                if (status == VERTICAL_FLING){
+                    scrollOverTouchSlop = true;
+                    scrollModel = SCROLL_VERTICAL;
+                }
+                setStatus(START);
+                if (mVelocityTracker == null){
+                    mVelocityTracker = VelocityTracker.obtain();
+                }else{
+                    mVelocityTracker.clear();
+                }
+                mVelocityX = 0;
+                mVelocityY = 0;
+
+                originX = ev.getX();
+                originY = ev.getY();
+                preX = ev.getX();
+                preY = ev.getY();
+                totalMoveY = 0.0f;
                 break;
             case MotionEvent.ACTION_MOVE:
                 newX = ev.getX();
@@ -398,6 +429,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 originY = event.getY();
                 preX = event.getX();
                 preY = event.getY();
+                totalMoveY = 0.0f;
                 super.onTouchEvent(event);
                 return true;
             case MotionEvent.ACTION_MOVE:
@@ -522,8 +554,11 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
             awesomeViewGroup.layout(lp.left, lp.top, lp.right, lp.bottom);
         }
 
+        totalMoveY += y;
+
         if (onScroll!=null){
-            onScroll.onVerticalScroll(y, (int) (newY - originY));
+            Log.i("aaa", "scrollByY: " + "newY : " + newY + " originY " + originY + " offset : " + totalMoveY);
+            onScroll.onVerticalScroll(y, (int) totalMoveY);
         }
     }
 
@@ -571,7 +606,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
             @Override
             public void onAnimationEnd(Animator animation) {
                 setStatus(STOP);
-                LogUtil.logAwesomes(awesomeViewGroupList);
+//                LogUtil.logAwesomes(awesomeViewGroupList);
             }
 
             @Override
@@ -613,7 +648,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
                 preY = newY;
 
                 totalScroll += offset;
-                LogUtil.log("vertical fling ", totalScroll + "");
+//                LogUtil.log("vertical fling ", totalScroll + "");
             }
         });
         animator.addListener(new Animator.AnimatorListener() {
@@ -625,7 +660,7 @@ public class ITimeRecycleViewGroup extends ViewGroup implements RecycleInterface
             @Override
             public void onAnimationEnd(Animator animation) {
                 setStatus(STOP);
-                LogUtil.logAwesomes(awesomeViewGroupList);
+//                LogUtil.logAwesomes(awesomeViewGroupList);
             }
 
             @Override

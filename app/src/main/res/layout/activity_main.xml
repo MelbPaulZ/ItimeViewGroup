@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.developer.paul.itimeviewgroup.MainActivity">
-
+    <TextView
+        android:layout_width="100dp"
+        android:layout_height="100dp" />
     <com.developer.paul.itimerecycleviewgroup.ITimeRecycleViewGroup
         android:id="@+id/recycleViewGroup"
         android:layout_width="300dp"
